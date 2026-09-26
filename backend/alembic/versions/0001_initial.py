@@ -4,9 +4,9 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 revision="0001"; down_revision=None; branch_labels=None; depends_on=None
 def upgrade():
-    prioridade=sa.Enum("ESSENCIAL","ALTA","MEDIA","BAIXA",name="prioridade_item_enum"); prioridade.create(op.get_bind())
-    status=sa.Enum("PENDENTE","EM_EXECUCAO","COMPRADO",name="status_item_enum"); status.create(op.get_bind())
-    tipo=sa.Enum("DINHEIRO","PIX","DEBITO","CREDITO","BENEFICIO","OUTRO",name="tipo_pagamento_enum"); tipo.create(op.get_bind())
+    prioridade=sa.Enum("ESSENCIAL","ALTA","MEDIA","BAIXA",name="prioridade_item_enum")
+    status=sa.Enum("PENDENTE","EM_EXECUCAO","COMPRADO",name="status_item_enum")
+    tipo=sa.Enum("DINHEIRO","PIX","DEBITO","CREDITO","BENEFICIO","OUTRO",name="tipo_pagamento_enum")
     op.create_table("categorias_itens",sa.Column("id",postgresql.UUID(as_uuid=True),primary_key=True),sa.Column("nome",sa.String(80),nullable=False,unique=True),sa.Column("ordem",sa.Integer(),server_default="0",nullable=False),sa.Column("ativo",sa.Boolean(),server_default="true",nullable=False))
     op.create_table("formas_pagamento",sa.Column("id",postgresql.UUID(as_uuid=True),primary_key=True),sa.Column("nome",sa.String(80),nullable=False,unique=True),sa.Column("tipo",tipo,nullable=False),sa.Column("ativo",sa.Boolean(),server_default="true",nullable=False))
     op.create_table("itens_casa",sa.Column("id",postgresql.UUID(as_uuid=True),primary_key=True),sa.Column("categoria_id",postgresql.UUID(as_uuid=True),sa.ForeignKey("categorias_itens.id",ondelete="RESTRICT"),nullable=False),sa.Column("nome",sa.String(150),nullable=False),sa.Column("quantidade",sa.Integer(),server_default="1",nullable=False),sa.Column("unidade",sa.String(30),server_default="un.",nullable=False),sa.Column("prioridade",prioridade,nullable=False),sa.Column("status",status,nullable=False),sa.Column("valor_minimo",sa.Numeric(12,2)),sa.Column("valor_estimado",sa.Numeric(12,2)),sa.Column("valor_maximo",sa.Numeric(12,2)),sa.Column("valor_pago",sa.Numeric(12,2)),sa.Column("observacao",sa.Text()),sa.Column("data_compra",sa.Date()),sa.Column("created_at",sa.DateTime(timezone=True),server_default=sa.func.now()),sa.CheckConstraint("quantidade > 0",name="ck_item_quantidade"),sa.CheckConstraint("valor_pago IS NULL OR valor_pago >= 0",name="ck_item_pago"),sa.UniqueConstraint("categoria_id","nome",name="uq_item_categoria_nome"))
