@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: ['divine-strength-production-1279.up.railway.app']
+    allowedHosts: [
+      'nossa-casa.up.railway.app'
+    ]
   }
 })
